@@ -30,8 +30,6 @@ func (s *ZoneManageSuite) TearDownTest() {
 }
 
 func (s *ZoneManageSuite) TestCreateZone_ok() {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(
 		http.MethodPost,
 		fmt.Sprintf("%s%s", testAPIURL, rootPath),
@@ -53,8 +51,6 @@ func (s *ZoneManageSuite) TestCreateZone_ok() {
 }
 
 func (s *ZoneManageSuite) TestGetZone_ok() {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
 	path := fmt.Sprintf(zonePath, testUUID)
 	httpmock.RegisterResponder(
 		http.MethodGet,
@@ -104,8 +100,6 @@ func (s *ZoneManageSuite) TestDeleteZone_ok() {
 }
 
 func (s *ZoneManageSuite) TestCreateZone_err_conflict() {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(
 		http.MethodPost,
 		fmt.Sprintf("%s%s", testAPIURL, rootPath),
@@ -119,13 +113,11 @@ func (s *ZoneManageSuite) TestCreateZone_err_conflict() {
 	zone, err := testClient.CreateZone(testCtx, newZone)
 
 	s.Empty(zone)
-	expectedError := "error response: bad_request. description: Conflict."
+	expectedError := "error response: bad_request. Description: Conflict."
 	s.EqualValues(err.Error(), expectedError)
 }
 
 func (s *ZoneManageSuite) TestCreateZone_err_bad_request_with_description_and_location() {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder(
 		http.MethodPost,
 		fmt.Sprintf("%s%s", testAPIURL, rootPath),
@@ -139,6 +131,6 @@ func (s *ZoneManageSuite) TestCreateZone_err_bad_request_with_description_and_lo
 	zone, err := testClient.CreateZone(testCtx, newZone)
 
 	s.Empty(zone)
-	expectedError := "error response: bad_request. description: field required. location: body.name."
+	expectedError := "error response: bad_request. Description: field required. Location: body.name."
 	s.EqualValues(err.Error(), expectedError)
 }

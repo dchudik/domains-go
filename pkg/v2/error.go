@@ -22,10 +22,10 @@ type (
 func (e BadResponseError) Error() string {
 	err := fmt.Sprintf("error response: %v.", e.ErrorMsg)
 	if e.Description != "" {
-		err += fmt.Sprintf(" description: %v.", e.Description)
+		err += fmt.Sprintf(" Description: %v.", e.Description)
 	}
 	if e.Location != "" {
-		err += fmt.Sprintf(" location: %v.", e.Location)
+		err += fmt.Sprintf(" Location: %v.", e.Location)
 	}
 
 	return err
