@@ -102,3 +102,43 @@ func (s *ZoneManageSuite) TestDeleteZone_ok() {
 
 	s.Nil(err)
 }
+
+func (s *ZoneManageSuite) TestCreateZone_err_conflict() {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder(
+		http.MethodPost,
+		fmt.Sprintf("%s%s", testAPIURL, rootPath),
+		httpmock.NewStringResponder(http.StatusConflict, mockCreateZoneConflictResponse()),
+	)
+
+	//nolint: exhaustruct
+	newZone := &v2.Zone{
+		Name: testDomainName,
+	}
+	zone, err := testClient.CreateZone(testCtx, newZone)
+
+	s.Empty(zone)
+	expectedError := "error response: bad_request. description: Conflict."
+	s.EqualValues(err.Error(), expectedError)
+}
+
+func (s *ZoneManageSuite) TestCreateZone_err_bad_request_with_description_and_location() {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder(
+		http.MethodPost,
+		fmt.Sprintf("%s%s", testAPIURL, rootPath),
+		httpmock.NewStringResponder(http.StatusBadRequest, mockCreateZoneFieldRequiredResponse()),
+	)
+
+	//nolint: exhaustruct
+	newZone := &v2.Zone{
+		Name: testDomainName,
+	}
+	zone, err := testClient.CreateZone(testCtx, newZone)
+
+	s.Empty(zone)
+	expectedError := "error response: bad_request. description: field required. location: body.name."
+	s.EqualValues(err.Error(), expectedError)
+}
